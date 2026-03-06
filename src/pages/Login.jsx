@@ -23,7 +23,13 @@ export default function Login() {
         setSuccess(null)
 
         try {
+            const isAdminEmail = email.toLowerCase() === 'prasanthanandarajan@gmail.com'
+            const isCollegeEmail = email.toLowerCase().endsWith('@hicas.ac.in')
+
             if (isLogin) {
+                if (!isAdminEmail && !isCollegeEmail) {
+                    throw new Error('Access Denied: Please use your @hicas.ac.in college email to login.')
+                }
                 const { data, error } = await signIn({ email, password })
                 if (error) {
                     if (error.message === 'Invalid login credentials') {
@@ -38,6 +44,10 @@ export default function Login() {
                     navigate('/')
                 }
             } else {
+                if (!isCollegeEmail) {
+                    throw new Error('Sign-up Restricted: Only @hicas.ac.in college emails are allowed to create accounts.')
+                }
+
                 if (password.length < 6) {
                     throw new Error('Password must be at least 6 characters.')
                 }
@@ -89,27 +99,41 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.1),transparent_50%)]">
-            <div className="w-full max-w-md space-y-8">
-                <div className="text-center">
-                    <div className="inline-flex w-16 h-16 bg-primary-600 rounded-2xl items-center justify-center text-white mb-6 transform rotate-12">
-                        <Shield size={32} />
+        <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4 lg:p-12 relative overflow-hidden">
+            {/* Animated Background Elements */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-600/10 rounded-full blur-[120px] animate-pulse"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse transition-all duration-500 delay-700"></div>
+
+            <div className="w-full max-w-[440px] relative z-10 animate-fade-in">
+                <div className="text-center mb-10">
+                    <div className="inline-flex w-20 h-20 bg-primary-600 rounded-3xl items-center justify-center text-white mb-6 transform rotate-12 shadow-2xl shadow-primary-600/30 ring-4 ring-white/5">
+                        <Shield size={40} className="drop-shadow-lg" />
                     </div>
-                    <h2 className="text-3xl font-bold text-white tracking-tight">CollegeCommunity</h2>
-                    <p className="text-slate-400 mt-2">Connecting Minds, Moderated by AI</p>
+                    <h2 className="text-4xl font-extrabold text-[var(--foreground)] tracking-tight">CollegeCommunity</h2>
+                    <p className="text-[var(--text-muted)] mt-2 font-medium">Connecting Minds, Moderated by AI</p>
                 </div>
 
-                <div className="glass-card p-8 bg-slate-900 border-slate-800 shadow-2xl">
-                    <div className="flex p-1 bg-slate-800 rounded-xl mb-8">
+                <div className="glass-card p-6 lg:p-10 shadow-2xl bg-[var(--card-bg)] border-[var(--card-border)]">
+                    <div className="flex p-1.5 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-2xl mb-8">
                         <button
                             onClick={() => { setIsLogin(true); setError(null); setSuccess(null) }}
-                            className={cn("flex-1 py-2 rounded-lg text-sm font-bold transition-all", isLogin ? "bg-primary-600 text-white shadow-lg" : "text-slate-400 hover:text-white")}
+                            className={cn(
+                                "flex-1 py-3 rounded-[14px] text-sm font-bold transition-all duration-300",
+                                isLogin
+                                    ? "bg-primary-600 text-white shadow-xl shadow-primary-600/20"
+                                    : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+                            )}
                         >
                             Login
                         </button>
                         <button
                             onClick={() => { setIsLogin(false); setError(null); setSuccess(null) }}
-                            className={cn("flex-1 py-2 rounded-lg text-sm font-bold transition-all", !isLogin ? "bg-primary-600 text-white shadow-lg" : "text-slate-400 hover:text-white")}
+                            className={cn(
+                                "flex-1 py-3 rounded-[14px] text-sm font-bold transition-all duration-300",
+                                !isLogin
+                                    ? "bg-primary-600 text-white shadow-xl shadow-primary-600/20"
+                                    : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+                            )}
                         >
                             Sign Up
                         </button>
@@ -119,47 +143,53 @@ export default function Login() {
                         {!isLogin && (
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block uppercase">Full Name</label>
+                                    <label className="text-[11px] font-black text-primary-600 mb-1.5 block uppercase tracking-widest pl-1">Full Name</label>
                                     <input
                                         type="text"
                                         value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
-                                        className="w-full bg-slate-800 border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all border"
+                                        className="input-style w-full px-5 py-3.5"
                                         placeholder="John Doe"
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block uppercase">I am a...</label>
-                                    <select
-                                        value={role}
-                                        onChange={(e) => setRole(e.target.value)}
-                                        className="w-full bg-slate-800 border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all border appearance-none"
-                                    >
-                                        <option value="student">Student</option>
-                                        <option value="faculty">Faculty Member</option>
-                                    </select>
+                                    <label className="text-[11px] font-black text-primary-600 mb-1.5 block uppercase tracking-widest pl-1">I am a...</label>
+                                    <div className="relative">
+                                        <select
+                                            value={role}
+                                            onChange={(e) => setRole(e.target.value)}
+                                            className="input-style w-full px-5 py-3.5 appearance-none cursor-pointer"
+                                        >
+                                            <option value="student">Student</option>
+                                            <option value="faculty">Faculty Member</option>
+                                            <option value="alumni">Alumni / Mentor</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <Shield size={16} />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
                         <div>
-                            <label className="text-xs font-bold text-slate-500 mb-1 block uppercase">Email Address</label>
+                            <label className="text-[11px] font-black text-primary-600 mb-1.5 block uppercase tracking-widest pl-1">Email Address</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-slate-800 border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all border"
-                                placeholder="you@gmail.com"
+                                className="input-style w-full px-5 py-3.5"
+                                placeholder="you@hicas.ac.in"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-slate-500 mb-1 block uppercase">Password</label>
+                            <label className="text-[11px] font-black text-primary-600 mb-1.5 block uppercase tracking-widest pl-1">Password</label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-slate-800 border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all border"
+                                className="input-style w-full px-5 py-3.5"
                                 placeholder="••••••••"
                                 required
                                 minLength={6}
@@ -182,12 +212,12 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-xl mt-4 shadow-lg shadow-primary-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-black py-4 rounded-2xl mt-6 shadow-2xl shadow-primary-600/30 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50"
                         >
                             {loading ? (
-                                <><Loader2 size={20} className="animate-spin" /> Processing...</>
+                                <><Loader2 size={22} className="animate-spin" /> Processing...</>
                             ) : (
-                                isLogin ? <><LogIn size={20} /> Login</> : <><UserPlus size={20} /> Create Account</>
+                                isLogin ? <><LogIn size={22} /> Login</> : <><UserPlus size={22} /> Sign Up</>
                             )}
                         </button>
                     </form>

@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         isAdmin: profile?.role === 'admin',
         isFaculty: profile?.role === 'faculty',
+        refreshProfile: () => user && fetchProfile(user.id)
     }
 
     return (

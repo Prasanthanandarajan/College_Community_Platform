@@ -1,0 +1,5 @@
+[
+  "C:\\collegecommunity\\src\\pages\\Feed.jsx:'cn' is not defined.",
+  "C:\\collegecommunity\\src\\pages\\Feed.jsx:'cn' is not defined.",
+  "C:\\collegecommunity\\src\\pages\\Feed.jsx:'cn' is not defined."
+]
