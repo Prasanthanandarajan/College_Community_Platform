@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { Users, Plus, UserPlus, UserMinus, Loader2, Search } from 'lucide-react'
+import { moderateContent } from '../utils/moderation'
 
 export default function Communities() {
     const { user } = useAuth()
