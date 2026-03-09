@@ -81,10 +81,10 @@ export default function GroupChat() {
 
         try {
             // AI Moderation check
-            const isAppropriate = await moderateContent(trimmedMessage)
+            const moderation = await moderateContent(trimmedMessage, 'message', user.id)
 
-            if (!isAppropriate) {
-                alert("Your message violates our community guidelines. Please keep the chat appropriate for college use.")
+            if (moderation.flagged) {
+                alert("🚫 Your message violates our community guidelines. Please keep the chat appropriate for college use.")
                 setSending(false)
                 return
             }
